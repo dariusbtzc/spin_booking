@@ -1,5 +1,5 @@
 ## Overview
-Scripts for automating bookings on Cru.
+Scripts for automating bookings on [Cru](https://www.cru68.com/).
 
 ## Booking details
 - Booking configurations can be found in `config.json`.
