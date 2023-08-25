@@ -8,8 +8,11 @@ from booking_bot import is_time_to_book, login_to_website, click_book_now, selec
 if not os.path.exists('log'):
     os.makedirs('log')
 
-# Set up logging
-logging.basicConfig(filename = 'log/booking_bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Get the current timestamp
+current_timestamp = time.strftime("%Y%m%d_%H%M%S")
+
+# Set up logging with a timestamped filename
+logging.basicConfig(filename = f'log/booking_bot_{current_timestamp}.log', level = logging.INFO, format = '%(asctime)s - %(levelname)s - %(message)s')
 
 # Load the configuration from the JSON file
 with open('config.json', 'r') as file:
