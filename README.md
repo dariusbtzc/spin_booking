@@ -16,6 +16,7 @@ Scripts for automating bookings on Cru.
 ## CRON instructions
 1. Install the required packages: `pip install -r requirements.txt`
 2. Open the CRON editor using the command: `crontab -e`.
-3. Add a CRON job by appending: `0 12 * * 1 /path/to/your/python3/path/to/your/bot_runner.py`
+3. Add a CRON job by appending: `0 12 * * 1 export CRU_BOOKING_EMAIL='your_email'; export CRU_BOOKING_PASSWORD='your_password'; /path/to/your/python3 /path/to/your/bot_runner.py`
     - This configuration schedules the script to run every Monday at 12:00PM.
-    - Replace `/path/to/your/python3` with the path to your Python3 interpreter and `/path/to/your/` with the actual path to your `bot_runner.py`.
+    - Make sure to replace `'your_email'` and `'your_password'` with your actual email and password. 
+    - Also, replace `/path/to/your/python3` with the actual path to your Python3 interpreter and `/path/to/your/bot_runner.py` with the path to your `bot_runner.py` script.
