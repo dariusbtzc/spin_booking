@@ -12,5 +12,5 @@
         "duration": "50 MIN"
     },
     "desired_seat": "B11",
-    "max_tries": 100
+    "max_tries": 5
 }

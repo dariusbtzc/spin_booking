@@ -1,6 +1,8 @@
-# Pycache files
-__pycache__/
-*.pyc
-
 # Log files
 log/
+
+# Misc
+backups/
+*.DS_Store
+__pycache__/
+*.pyc
