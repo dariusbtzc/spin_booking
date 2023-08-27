@@ -1,5 +1,8 @@
 # Log files
-log/
+logs/
+
+# Test files
+tests/
 
 # Misc
 *.DS_Store

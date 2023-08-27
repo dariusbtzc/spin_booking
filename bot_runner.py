@@ -12,7 +12,7 @@ if not os.path.exists('log'):
 current_timestamp = time.strftime("%Y%m%d_%H%M%S")
 
 # Set up logging with a timestamped filename
-logging.basicConfig(filename = f'log/booking_bot_{current_timestamp}.log', level = logging.INFO, format = '%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename = f'logs/booking_bot_{current_timestamp}.log', level = logging.INFO, format = '%(asctime)s - %(levelname)s - %(message)s')
 
 # Load the configuration from the JSON file
 with open('config.json', 'r') as file:
