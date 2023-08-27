@@ -9,6 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 logger = logging.getLogger()
 
@@ -79,7 +81,7 @@ def login_to_website():
     OPTIONS.headless = True
 
     # Start a new browser session with the options
-    driver = webdriver.Chrome(options = OPTIONS)
+    driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options = OPTIONS)
 
     # Navigate to the login URL
     driver.get(config['login_url'])
