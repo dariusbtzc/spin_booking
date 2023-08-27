@@ -5,8 +5,8 @@ import logging
 from booking_bot import is_time_to_book, login_to_website, click_book_now, select_session, select_seat
 
 # Ensure the 'log' directory exists
-if not os.path.exists('log'):
-    os.makedirs('log')
+if not os.path.exists('logs'):
+    os.makedirs('logs')
 
 # Get the current timestamp
 current_timestamp = time.strftime("%Y%m%d_%H%M%S")

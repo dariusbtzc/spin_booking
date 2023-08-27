@@ -1,9 +1,6 @@
 # Log files
 logs/
 
-# Test files
-tests/
-
 # Misc
 *.DS_Store
 __pycache__/
