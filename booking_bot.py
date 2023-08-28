@@ -144,7 +144,7 @@ def click_book_now(driver):
         # Locate the 'Book Now' drop-down menu
         book_now_dropdown = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "book-now")))
 
-        # Hover over the 'Book Now' drop-down menu
+        #Hover over the 'Book Now' drop-down menu
         hover = ActionChains(driver).move_to_element(book_now_dropdown)
         hover.perform()
 
