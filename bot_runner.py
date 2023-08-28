@@ -21,9 +21,9 @@ with open('config.json', 'r') as file:
 MAX_TRIES = config['max_tries']
 
 def main():
-    # if not is_time_to_book():
-    #     logging.info("Exiting.")
-    #     return None
+    if not is_time_to_book():
+        logging.info("Exiting.")
+        return None
 
     for attempt in range(1, MAX_TRIES + 1):
         logging.info(f"Attempt {attempt} of {MAX_TRIES}...")
