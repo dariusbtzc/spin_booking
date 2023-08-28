@@ -22,7 +22,7 @@ MAX_TRIES = config['max_tries']
 
 def main():
     if not is_time_to_book():
-        logging.info("It's not the right time to book yet. Exiting.")
+        logging.info("Exiting.")
         return None
 
     for attempt in range(1, MAX_TRIES + 1):
