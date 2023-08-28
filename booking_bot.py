@@ -3,13 +3,14 @@ import json
 import logging
 from datetime import datetime
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
 logger = logging.getLogger()
@@ -77,35 +78,41 @@ def login_to_website():
         return None
 
     # Set Chrome options for headless mode
-    OPTIONS = webdriver.ChromeOptions()
-    OPTIONS.headless = True
+    OPTIONS = Options()
+    OPTIONS.add_argument('--headless=new')
 
     # Start a new browser session with the options
-    driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options = OPTIONS)
+    driver = webdriver.Chrome(service = ChromeService(ChromeDriverManager().install()), options = OPTIONS)
 
     # Navigate to the login URL
     driver.get(config['login_url'])
 
     try:
-        # Find the email and password input fields using the placeholder text
-        email_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Email']")))
-        password_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Password']")))
+        # Switch to the iframe
+        iframe_element = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+        driver.switch_to.frame(iframe_element)
+
+        # Find the email and password input fields 
+        email_input = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "username")))
+        password_input = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "password")))
 
         # Input the email and password
         email_input.send_keys(email)
         password_input.send_keys(password)
 
-        # Find the 'Sign In' button by its text and click it
-        sign_in_button = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Sign In']")))
+        # Find the 'Sign In' button
+        sign_in_button = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@type='submit']")))
         sign_in_button.click()
 
         # Wait for a short duration to allow the page to process the login and display any error messages
-        error_message = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Sorry, that username/password was not recognized.')]")))
-        
+        error_message = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "alert")))
         if error_message:
             logger.info("Login failed: Incorrect username or password.")
             driver.quit()   # Close the browser session
             return None
+
+        # Switch back to the main content
+        driver.switch_to.default_content()
 
     except (NoSuchElementException, TimeoutException) as e:
         logger.info(f"Error during login: {e}")
