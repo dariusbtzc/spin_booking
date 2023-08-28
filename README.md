@@ -20,3 +20,5 @@ Scripts for automating bookings on [Cru](https://www.cru68.com/).
     - This configuration schedules the script to run every Monday at 12:00PM.
     - Make sure to replace `'your_email'` and `'your_password'` with your actual email and password. 
     - Also, replace `/path/to/your/python3` with the actual path to your Python3 interpreter and `/path/to/your/bot_runner.py` with the path to your `bot_runner.py` script.
+
+**Note**: The local computer needs to be switched on for the CRON job to run.
