@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import logging
 from datetime import datetime
@@ -104,26 +105,28 @@ def login_to_website():
         sign_in_button = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@type='submit']")))
         sign_in_button.click()
 
-        # Wait for a short duration to allow the page to process the login and display any error messages
-        error_message = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "alert")))
-        if error_message:
-            logger.info("Login failed: Incorrect username or password.")
-            driver.quit()   # Close the browser session
-            return None
+        # Wait for a short duration to check for the error message
+        time.sleep(5)  
+        error_message = None
 
-        # Switch back to the main content
-        driver.switch_to.default_content()
+        try:
+            error_message = driver.find_element(By.CLASS_NAME, "alert")
+        except NoSuchElementException:
+            pass
+
+        if error_message and error_message.is_displayed():
+            logger.info("Login failed: Incorrect username or password.")
+            driver.quit()
+            return None
+        else:
+            logger.info("Login successful!")
+            driver.switch_to.default_content()
+            return driver
 
     except (NoSuchElementException, TimeoutException) as e:
         logger.info(f"Error during login: {e}")
         driver.quit()
         return None
-
-    # If no error message is found, the login is assumed to be successful
-    logger.info("Login successful!")
-
-    # Return the driver in case you want to perform more actions in the same session
-    return driver
 
 
 def click_book_now(driver):
@@ -139,17 +142,18 @@ def click_book_now(driver):
 
     try:
         # Locate the 'Book Now' drop-down menu
-        book_now_dropdown = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Book Now']")))
-        
+        book_now_dropdown = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "book-now")))
+
         # Hover over the 'Book Now' drop-down menu
         hover = ActionChains(driver).move_to_element(book_now_dropdown)
         hover.perform()
 
-        # Select the desired location from the drop-down menu
+        # Locate the desired location from the drop-down menu
         desired_location = config['desired_location']
-        location_element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='{desired_location}']")))
+        location_element = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
         location_element.click()
 
+        logger.info(f"Clicked 'Book Now'!")
         return True
     
     except (NoSuchElementException, TimeoutException) as e:
