@@ -101,7 +101,7 @@ def login_to_website():
         password_input.send_keys(password)
 
         # Find the 'Sign In' button
-        sign_in_button = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@type='submit']")))
+        sign_in_button = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.XPATH, "//button[@type='submit']")))
         sign_in_button.click()
 
         # Wait for a short duration to check for the error message
@@ -141,7 +141,7 @@ def click_book_now(driver):
 
     try:
         # Locate the 'Book Now' drop-down menu
-        book_now_dropdown = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "book-now")))
+        book_now_dropdown = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.ID, "book-now")))
 
         # Hover over the 'Book Now' drop-down menu
         hover = ActionChains(driver).move_to_element(book_now_dropdown)
@@ -149,10 +149,10 @@ def click_book_now(driver):
 
         # Locate the desired location from the drop-down menu
         desired_location = config['desired_location']
-        location_element = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
+        location_element = WebDriverWait(driver, 2).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
         location_element.click()
 
-        logger.info(f"Clicked 'Book Now'!")
+        logger.info(f"Clicked 'Book Now' > {desired_location}!")
         return True
     
     except (NoSuchElementException, TimeoutException) as e:
@@ -172,18 +172,37 @@ def select_session(driver):
     '''
 
     try:
-        # Break down the XPath construction for readability
-        location_xpath = f"//*[text()='{config['desired_session']['location']}']"
-        instructor_xpath = f"./following-sibling::*[text()='{config['desired_session']['instructor']}'][1]"
-        time_xpath = f"./following-sibling::*[text()='{config['desired_session']['time']}'][1]"
-        duration_xpath = f"./following-sibling::*[text()='{config['desired_session']['duration']}'][1]"
+        # Switch to the iframe
+        iframe_element = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+        driver.switch_to.frame(iframe_element)
 
-        # Combine the individual XPaths to form the complete XPath expression
-        session_xpath = f"{location_xpath}{instructor_xpath}{time_xpath}{duration_xpath}"
+        # Locate the desired session day
+        desired_session_day = config['desired_session']['day']
+        session_day = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, desired_session_day)))
+        logger.info(f"Located desired session day: {desired_session_day}!")
+
+        # Construct XPath for desired session activity and instructor
+        desired_session_activity = config['desired_session']['activity']    
+        desired_session_instructor = config['desired_session']['instructor']
+        activity_xpath = f"//a//span[contains(text(), '{desired_session_activity}')]"
+        instructor_xpath = f"//span[contains(text(), '{desired_session_instructor}')]"
+        activity_instructor_xpath = f"//div[{activity_xpath} and {instructor_xpath}]"
+
+        # Locate the desired session activity
+        try:
+            session_activity = WebDriverWait(session_day, 3).until(EC.presence_of_element_located((By.XPATH, activity_instructor_xpath)))
+            session_activity_attribute = session_activity.get_attribute('outerHTML')
+            logger.info(f"Session activity element: {session_activity_attribute}")
+        except TimeoutException:
+            logger.error("Unable to locate the desired session activity and instructor.")
+            return False
+
+        # Click on the desired session activity (within the div class)
+        session_activity_click = WebDriverWait(session_activity, 3).until(EC.element_to_be_clickable((By.XPATH, activity_xpath)))
+        session_activity_click.click()
         
-        # Click on the session to select it
-        session_timing = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, session_xpath)))
-        session_timing.click()
+        logger.info(f"Clicked on '{desired_session_activity}, {desired_session_instructor}'!")
+        driver.switch_to.default_content()
         return True
     
     except (NoSuchElementException, TimeoutException) as e:
