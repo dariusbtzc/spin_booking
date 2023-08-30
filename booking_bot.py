@@ -5,7 +5,6 @@ import logging
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -62,7 +61,7 @@ def login_to_website():
     Attempt to log in to the website using the credentials set in environment variables.
 
     Returns:
-        webdriver.Chrome: A Chrome browser session if the login is successful.
+        driver (webdriver.Chrome): A Chrome browser session if the login is successful.
         None: If the login fails or if email/password are not set in environment variables.
 
     Environment Variables:
@@ -78,7 +77,7 @@ def login_to_website():
         logger.info("Error: Email or password not set in environment variables.")
         return None
 
-    # Set Chrome options for headless mode
+    # Set Chrome options for headless mode (i.e., browser session not visible)
     OPTIONS = Options()
     OPTIONS.add_argument('--headless=new')
 
@@ -90,23 +89,23 @@ def login_to_website():
 
     try:
         # Switch to the iframe
-        iframe_element = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+        iframe_element = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
         driver.switch_to.frame(iframe_element)
 
         # Find the email and password input fields 
-        email_input = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "username")))
-        password_input = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "password")))
+        email_input = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "username")))
+        password_input = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "password")))
 
         # Input the email and password
         email_input.send_keys(email)
         password_input.send_keys(password)
 
         # Find the 'Sign In' button
-        sign_in_button = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@type='submit']")))
+        sign_in_button = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@type='submit']")))
         sign_in_button.click()
 
         # Wait for a short duration to check for the error message
-        time.sleep(5)  
+        time.sleep(3)  
         error_message = None
 
         try:
@@ -142,7 +141,7 @@ def click_book_now(driver):
 
     try:
         # Locate the 'Book Now' drop-down menu
-        book_now_dropdown = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "book-now")))
+        book_now_dropdown = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "book-now")))
 
         # Hover over the 'Book Now' drop-down menu
         hover = ActionChains(driver).move_to_element(book_now_dropdown)
@@ -150,14 +149,14 @@ def click_book_now(driver):
 
         # Locate the desired location from the drop-down menu
         desired_location = config['desired_location']
-        location_element = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
+        location_element = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
         location_element.click()
 
         logger.info(f"Clicked 'Book Now'!")
         return True
     
     except (NoSuchElementException, TimeoutException) as e:
-        logger.info(f"Error selecting location from 'Book Now' dropdown: {e}")
+        logger.info(f"Error selecting location from 'Book Now' drop-down: {e}")
         return False
 
 

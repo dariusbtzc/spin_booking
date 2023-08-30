@@ -4,7 +4,7 @@ import json
 import logging
 from booking_bot import is_time_to_book, login_to_website, click_book_now, select_session, select_seat
 
-# Ensure the 'log' directory exists
+# Ensure the 'logs' directory exists
 if not os.path.exists('logs'):
     os.makedirs('logs')
 
@@ -44,7 +44,7 @@ def main():
             driver.quit()
 
         # Wait for a short duration before the next attempt
-        time.sleep(10)  # Wait for 10 seconds
+        time.sleep(3)   # Wait for 3 seconds
 
     logging.error("Reached maximum number of tries without success. Please try again later.")
 
