@@ -209,7 +209,7 @@ def select_session(driver):
         return False
     
 
-def select_bike(driver):
+def select_bike(driver, desired_bike):
     '''
     Select the desired bike for the session.
 
@@ -226,7 +226,6 @@ def select_bike(driver):
         driver.switch_to.frame(iframe_element)
 
         # Locate and click the desired bike
-        desired_bike = config['desired_bike']
         bike = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_bike)))
         bike.click()
 
