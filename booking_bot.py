@@ -130,7 +130,7 @@ def login_to_website():
 
 def click_book_now(driver):
     '''
-    Hover over the 'Book Now' drop-down menu and then select the desired location.
+    Hover over the 'Book Now' drop-down menu and select the desired location.
 
     Parameters:
         driver (webdriver.Chrome): The active Chrome browser session.
@@ -147,7 +147,7 @@ def click_book_now(driver):
         hover = ActionChains(driver).move_to_element(book_now_dropdown)
         hover.perform()
 
-        # Locate the desired location from the drop-down menu
+        # Click the desired location from the drop-down menu
         desired_location = config['desired_location']
         location_element = WebDriverWait(driver, 2).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
         location_element.click()
@@ -179,31 +179,29 @@ def select_session(driver):
         # Locate the desired session day
         desired_session_day = config['desired_session']['day']
         session_day = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, desired_session_day)))
-        logger.info(f"Located desired session day: {desired_session_day}!")
+        session_day_class_attribute = session_day.get_attribute('class')
+        logger.info(f"Located desired session day: {session_day_class_attribute}!")
 
-        # Construct XPath for desired session activity and instructor
-        desired_session_activity = config['desired_session']['activity']    
+        # Locate the desired instructor (via data-instructor)
+        desired_session_data_instructor = config['desired_session']['data_instructor']
+        session_day_data_instructor = WebDriverWait(session_day, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, f"div[data-instructor = '{desired_session_data_instructor}']")))
+        session_day_data_instructor_text = session_day_data_instructor.text
+        logger.info(f"Session data instructor element:\n{session_day_data_instructor_text}")
+
+        # Confirm and click on the desired session activity
+        desired_session_activity = config['desired_session']['activity']
         desired_session_instructor = config['desired_session']['instructor']
-        activity_xpath = f"//a//span[contains(text(), '{desired_session_activity}')]"
-        instructor_xpath = f"//span[contains(text(), '{desired_session_instructor}')]"
-        activity_instructor_xpath = f"//div[{activity_xpath} and {instructor_xpath}]"
 
-        # Locate the desired session activity
-        try:
-            session_activity = WebDriverWait(session_day, 3).until(EC.presence_of_element_located((By.XPATH, activity_instructor_xpath)))
-            session_activity_attribute = session_activity.get_attribute('outerHTML')
-            logger.info(f"Session activity element: {session_activity_attribute}")
-        except TimeoutException:
-            logger.error("Unable to locate the desired session activity and instructor.")
+        if (desired_session_activity in session_day_data_instructor_text) and (desired_session_instructor in session_day_data_instructor_text):
+            session_day_activity = WebDriverWait(session_day_data_instructor, 3).until(EC.element_to_be_clickable((By.XPATH, f"//span[contains(text(),'{desired_session_activity}')]")))
+            session_day_activity.click()
+            
+            logger.info(f"Clicked on '{desired_session_activity}, {desired_session_instructor}'!")
+            driver.switch_to.default_content()
+            return True
+        else:
+            logger.info("Unable to find the correct activity and/or instructor.")
             return False
-
-        # Click on the desired session activity (within the div class)
-        session_activity_click = WebDriverWait(session_activity, 3).until(EC.element_to_be_clickable((By.XPATH, activity_xpath)))
-        session_activity_click.click()
-        
-        logger.info(f"Clicked on '{desired_session_activity}, {desired_session_instructor}'!")
-        driver.switch_to.default_content()
-        return True
     
     except (NoSuchElementException, TimeoutException) as e:
         logger.info(f"Error selecting session: {e}")
