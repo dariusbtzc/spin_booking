@@ -2,7 +2,7 @@ import os
 import time
 import json
 import logging
-from booking_bot import is_time_to_book, login_to_website, click_book_now, select_session, select_seat
+from booking_bot import is_time_to_book, login_to_website, click_book_now, select_session, select_bike
 
 # Ensure the 'logs' directory exists
 if not os.path.exists('logs'):
@@ -34,13 +34,13 @@ def main():
         if driver:  
             if click_book_now(driver):
                 if select_session(driver):
-                    result = select_seat(driver)
-                    if "Successfully enrolled" in result:
+                    result = select_bike(driver)
+                    if "successfully enrolled" in result:
                         logging.info("Booking successful!")
                         driver.quit()
-                        return
+                        return None
                     else:
-                        logging.warning(result)
+                        logging.info(result)
             driver.quit()
 
         # Wait for a short duration before the next attempt

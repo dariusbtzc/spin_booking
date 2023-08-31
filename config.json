@@ -11,6 +11,6 @@
         "activity": "CRUCYCLE DUXTON",
         "instructor": "MARK L."
     },
-    "desired_seat": "B11",
+    "desired_bike": "B11",
     "max_tries": 10
 }

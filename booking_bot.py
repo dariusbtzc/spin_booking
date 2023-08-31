@@ -62,7 +62,7 @@ def login_to_website():
 
     Returns:
         driver (webdriver.Chrome): A Chrome browser session if the login is successful.
-        None: If the login fails or if email/password are not set in environment variables.
+        None: If the login fails or if email / password are not set in environment variables.
 
     Environment Variables:
         - CRU_BOOKING_EMAIL: The email to use for logging in.
@@ -149,8 +149,8 @@ def click_book_now(driver):
 
         # Click the desired location from the drop-down menu
         desired_location = config['desired_location']
-        location_element = WebDriverWait(driver, 2).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
-        location_element.click()
+        location = WebDriverWait(driver, 2).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
+        location.click()
 
         logger.info(f"Clicked 'Book Now' > {desired_location}!")
         return True
@@ -162,7 +162,7 @@ def click_book_now(driver):
 
 def select_session(driver):
     '''
-    Select the specified session/timing based on the detailed session information.
+    Select the specified session based on the desired session information.
 
     Parameters:
         driver (webdriver.Chrome): The active Chrome browser session.
@@ -193,7 +193,8 @@ def select_session(driver):
         desired_session_instructor = config['desired_session']['instructor']
 
         if (desired_session_activity in session_day_data_instructor_text) and (desired_session_instructor in session_day_data_instructor_text):
-            session_day_activity = WebDriverWait(session_day_data_instructor, 3).until(EC.element_to_be_clickable((By.XPATH, f"//span[contains(text(),'{desired_session_activity}')]")))
+            session_day_activity = WebDriverWait(session_day_data_instructor, 3).until(EC.element_to_be_clickable((By.TAG_NAME, "a")))
+            driver.execute_script("arguments[0].scrollIntoView();", session_day_activity)   # Scroll the element into view
             session_day_activity.click()
             
             logger.info(f"Clicked on '{desired_session_activity}, {desired_session_instructor}'!")
@@ -208,44 +209,52 @@ def select_session(driver):
         return False
     
 
-def select_seat(driver):
+def select_bike(driver):
     '''
-    Select the desired seat for the session.
+    Select the desired bike for the session.
 
     Parameters:
         driver (webdriver.Chrome): The active Chrome browser session.
 
     Returns:
-        str: A message indicating the outcome of the seat selection.
+        str: A message indicating the outcome of the bike selection.
     '''
 
-    desired_seat = config['desired_seat']
-
     try:
-        # Locate the seat element
-        seat_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f"//*[text()='{desired_seat}']")))
+        # Switch to the iframe
+        iframe_element = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+        driver.switch_to.frame(iframe_element)
 
-        # Check if the seat is available (not grey)
-        seat_color = seat_element.value_of_css_property("color")
-        if "rgb(" in seat_color:   
-            return "Seat is already booked."
+        # Locate and click the desired bike
+        desired_bike = config['desired_bike']
+        bike = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_bike)))
+        bike.click()
 
-        # Click on the seat
-        seat_element.click()
+        # Wait for a short duration to check for the outcome message
+        time.sleep(3)  
 
-        # Check for the outcome messages
-        no_series_message = "You don't have a series in your account that's applicable for this class."
-        success_message = "You have been successfully enrolled in the class highlighted below."
+        no_series_msg_element = None
 
         try:
-            if WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f"//*[contains(text(), '{no_series_message}')]"))):
-                return "No applicable series in account."
-        except TimeoutException:
+            no_series_msg_element = driver.find_element(By.CSS_SELECTOR, "a[data-dismiss = 'alert']")
+        except NoSuchElementException:
             pass
 
+        if no_series_msg_element:
+            return "You don't have a series in your account that's applicable for this class."
+        else:
+            pass
+
+        success_msg_element = None
+
         try:
-            if WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f"//*[contains(text(), '{success_message}')]"))):
-                return "Successfully enrolled in the class."
+            success_msg_element = driver.find_element(By.CLASS_NAME, "success-message")
+        except NoSuchElementException:
+            pass
+        
+        try:
+            if success_msg_element and success_msg_element.is_displayed():
+                return success_msg_element.text
         except TimeoutException:
             return "Unknown outcome after seat selection."
 
