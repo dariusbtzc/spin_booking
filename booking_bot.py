@@ -288,13 +288,13 @@ class BookingBot:
         '''
 
         desired_bikes = self.config['desired_bikes']
-        MAX_TRIES = self.config['max_tries']
+        max_tries = self.config['max_tries']
 
         for desired_bike in desired_bikes:
             booking_successful = False
 
-            for attempt in range(1, MAX_TRIES + 1):
-                logging.info(f"Attempt {attempt} of {MAX_TRIES} for bike {desired_bike}...")
+            for attempt in range(1, max_tries + 1):
+                logging.info(f"Attempt {attempt} of {max_tries} for bike {desired_bike}...")
 
                 try:
                     if self.login_to_website():
