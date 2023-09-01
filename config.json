@@ -8,10 +8,11 @@
     "desired_location": "CRU Duxton",
     "desired_session": {
         "day": "day6",
-        "data_instructor": "1498305921896416512",
         "activity": "CRUCYCLE DUXTON",
-        "instructor": "MARK L."
+        "instructor": "MARK L.",
+        "data_instructor": "1498305921896416512"
     },
     "desired_bikes": ["B11"],
-    "max_tries": 5
+    "max_tries": 5,
+    "default_lag": 2
 }
