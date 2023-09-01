@@ -92,6 +92,7 @@ class BookingBot:
     def login_to_website(self):
         '''
         Attempt to log in to the website using the credentials set in environment variables.
+        This method will start the driver if it's not already started.
 
         Returns:
             bool: True if the login is successful, False otherwise.
@@ -139,11 +140,12 @@ class BookingBot:
             # Wait for a short duration to check for the error message
             time.sleep(self.lag)  
             
-            error_message = self.driver.find_element(By.CLASS_NAME, "alert")
-            if error_message and error_message.is_displayed():
-                logging.info("Login failed: Incorrect username or password")
-                return False
-            else:
+            try:
+                error_message = self.driver.find_element(By.CLASS_NAME, "alert")
+                if error_message.is_displayed():
+                    logging.info("Login failed: Incorrect username or password.")
+                    return False
+            except (NoSuchElementException, TimeoutException):
                 logging.info("Login successful!")
                 self.driver.switch_to.default_content()
                 return True
@@ -236,7 +238,10 @@ class BookingBot:
             desired_bike (str): The bike to be selected.
 
         Returns:
-            str: A message indicating the outcome of the bike selection, which could be a success message or an error message.
+            str: A message indicating the outcome of the bike selection. This could be one of the following:
+                - A success message if the bike is successfully booked.
+                - An error message if there was an issue during the booking.
+                - A message indicating that the user doesn't have a series in their account that's applicable for this class.
         '''
 
         try:
@@ -251,13 +256,19 @@ class BookingBot:
             # Wait for a short duration to check for the outcome message
             time.sleep(self.lag)  
 
-            no_series_msg_element = self.driver.find_element(By.CSS_SELECTOR, "a[data-dismiss = 'alert']")
-            if no_series_msg_element:
-                return "You don't have a series in your account that's applicable for this class."
-            
-            success_msg_element = self.driver.find_element(By.CLASS_NAME, "success-message")
-            if success_msg_element and success_msg_element.is_displayed():
-                return success_msg_element.text
+            try:
+                no_series_msg_element = self.driver.find_element(By.CSS_SELECTOR, "a[data-dismiss = 'alert']")
+                if no_series_msg_element.is_displayed():
+                    return "You don't have a series in your account that's applicable for this class."
+            except (NoSuchElementException, TimeoutException):
+                pass
+
+            try:
+                success_msg_element = self.driver.find_element(By.CLASS_NAME, "success-message")
+                if success_msg_element.is_displayed():
+                    return success_msg_element.text
+            except (NoSuchElementException, TimeoutException):
+                return "Unknown outcome after seat selection."
 
         except (NoSuchElementException, TimeoutException) as e:
             return f"Error during seat selection: {e}"

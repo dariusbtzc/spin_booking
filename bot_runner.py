@@ -19,10 +19,10 @@ with open('config.json', 'r') as file:
     config = json.load(file)
 
 def main():
+    bot = BookingBot(config)
+
     time_check_limit = config['time_check_limit']
     time_check_count = 0
-
-    bot = BookingBot(config)
 
     while not bot.is_time_to_book():  
         logging.info("Waiting for the right time to book...")
