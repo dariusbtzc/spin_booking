@@ -21,19 +21,34 @@ with open('config.json', 'r') as file:
 MAX_TRIES = config['max_tries']
 
 def main():
-    if not is_time_to_book():
-        logging.info("Exiting.")
-        return None
+    time_check_limit = config['time_check_limit']
+    time_check_count = 0
+
+    while not is_time_to_book():  
+        logging.info("Not time to book yet. Waiting...")
+        time.sleep(60)  
+
+        time_check_count += 1  
+
+        if time_check_count >= time_check_limit:
+            logging.info("Reached the limit for time checks. Exiting.")
+            return None
     
     # Load the list of desired bikes
     desired_bikes = config['desired_bikes']
 
     for desired_bike in desired_bikes:
+        booking_successful = False
+
         for attempt in range(1, MAX_TRIES + 1):
             logging.info(f"Attempt {attempt} of {MAX_TRIES} for bike {desired_bike}...")
 
-            # Start the booking process
-            driver = login_to_website()
+            try:
+                # Start the booking process
+                driver = login_to_website()
+            except Exception as e:
+                logging.error(f"Error during login: {e}")
+                continue
 
             if driver:  
                 if click_book_now(driver):
@@ -42,6 +57,7 @@ def main():
                         if "successfully enrolled" in result:
                             logging.info(f"Booking successful for bike {desired_bike}!")
                             driver.quit()
+                            booking_successful = True
                             break 
                         else:
                             logging.info(result)
@@ -50,7 +66,8 @@ def main():
             # Wait for a short duration before the next attempt
             time.sleep(3)   # Wait for 3 seconds
 
-        logging.error(f"Maximum number of tries without success reached for bike {desired_bike}. Please try again later.")
+        if not booking_successful:
+            logging.error(f"Maximum number of tries without success reached for bike {desired_bike}. Please try again later.")
 
 if __name__ == "__main__":
     main()

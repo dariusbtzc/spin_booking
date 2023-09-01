@@ -1,4 +1,5 @@
 {
+    "time_check_limit": 10,
     "booking_day": "Monday",
     "booking_hour": 12,
     "booking_minute_start": 0,

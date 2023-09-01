@@ -69,12 +69,16 @@ def login_to_website():
         - CRU_BOOKING_PASSWORD: The password to use for logging in.
     '''
 
-    # Get email and password from environment variables
-    email = os.environ.get('CRU_BOOKING_EMAIL')
-    password = os.environ.get('CRU_BOOKING_PASSWORD')
+    try:
+        # Get email and password from environment variables
+        email = os.environ.get('CRU_BOOKING_EMAIL')
+        password = os.environ.get('CRU_BOOKING_PASSWORD')
 
-    if not email or not password:
-        logger.info("Error: Email or password not set in environment variables.")
+        if not email or not password:
+            logger.info("Error: Email or password not set in environment variables.")
+            return None
+    except Exception as e:
+        logger.error(f"Error reading environment variables: {e}")
         return None
 
     # Set Chrome options for headless mode (i.e., browser session not visible)
