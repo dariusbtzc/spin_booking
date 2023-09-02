@@ -68,7 +68,7 @@ class BookingBot:
         '''
         
         OPTIONS = Options()
-        OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
+        # OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
         self.driver = webdriver.Chrome(service = ChromeService(ChromeDriverManager().install()), options = OPTIONS)
         logging.info("Started the Chrome driver.")
 
@@ -165,7 +165,7 @@ class BookingBot:
 
         try:
             # Locate the 'Book Now' drop-down menu
-            book_now_dropdown = WebDriverWait(self.driver, self.lag).until(EC.presence_of_element_located((By.ID, "book-now")))
+            book_now_dropdown = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.ID, "book-now")))
 
             # Hover over the 'Book Now' drop-down menu
             hover = ActionChains(self.driver).move_to_element(book_now_dropdown)
@@ -173,7 +173,7 @@ class BookingBot:
 
             # Click the desired location from the drop-down menu
             desired_location = self.config['desired_location']
-            location = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
+            location = WebDriverWait(self.driver, 1).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
             location.click()
 
             logging.info(f"Clicked 'Book Now' > {desired_location}!")
@@ -187,6 +187,7 @@ class BookingBot:
     def select_session(self):
         '''
         Select the specified session based on the desired session information.
+        This method also clicks the "NEXT WEEK" button to navigate to the sessions for the following week.
 
         Returns:
             bool: True if the desired session is successfully selected, False otherwise.
@@ -196,6 +197,13 @@ class BookingBot:
             # Switch to the iframe
             iframe_element = WebDriverWait(self.driver, self.lag).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
             self.driver.switch_to.frame(iframe_element)
+
+            # Click "NEXT WEEK" button
+            next_week_button = WebDriverWait(self.driver, self.lag).until(EC.presence_of_element_located((By.CLASS_NAME, "next")))
+            next_week_link = WebDriverWait(next_week_button, self.lag).until(EC.element_to_be_clickable((By.TAG_NAME, "a")))
+            self.driver.execute_script("arguments[0].scrollIntoView();", next_week_link)  # Scroll the element into view
+            next_week_link.click()
+            logging.info(f"Click 'NEXT WEEK' button!")
 
             # Locate the desired session day
             desired_session_day = self.config['desired_session']['day']
