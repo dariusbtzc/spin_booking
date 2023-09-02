@@ -7,12 +7,12 @@
     "login_url": "https://www.cru68.com/schedule#/login/message/unauthorized/st/021bad48-2365-4df5-93d8-68e9dda8b4bf/site/1",
     "desired_location": "CRU Duxton",
     "desired_session": {
-        "day": "day6",
+        "day": "day5",
         "activity": "CRUCYCLE DUXTON",
-        "instructor": "MARK L.",
-        "data_instructor": "1498305921896416512"
+        "instructor": "JOLYN Y.",
+        "data_instructor": "20000000022"
     },
-    "desired_bikes": ["B11"],
+    "desired_bikes": ["B7", "B8", "B9", "B10"],
     "max_tries": 5,
     "default_lag": 2
 }
