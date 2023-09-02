@@ -68,7 +68,7 @@ class BookingBot:
         '''
         
         OPTIONS = Options()
-        # OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
+        OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
         self.driver = webdriver.Chrome(service = ChromeService(ChromeDriverManager().install()), options = OPTIONS)
         logging.info("Started the Chrome driver.")
 
