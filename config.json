@@ -10,7 +10,8 @@
         "day": "day5",
         "activity": "CRUCYCLE DUXTON",
         "instructor": "JOLYN Y.",
-        "data_instructor": "20000000022"
+        "data_instructor": "20000000022",
+        "time": "9:45 AM"
     },
     "desired_bikes": ["B7", "B8", "B9", "B10"],
     "max_tries": 5,
