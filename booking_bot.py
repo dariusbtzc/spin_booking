@@ -68,7 +68,7 @@ class BookingBot:
         '''
         
         OPTIONS = Options()
-        OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
+        # OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
         self.driver = webdriver.Chrome(service = ChromeService(ChromeDriverManager().install()), options = OPTIONS)
         logging.info("Started the Chrome driver.")
 
@@ -165,7 +165,7 @@ class BookingBot:
 
         try:
             # Locate the 'Book Now' drop-down menu
-            book_now_dropdown = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.ID, "book-now")))
+            book_now_dropdown = WebDriverWait(self.driver, self.lag).until(EC.presence_of_element_located((By.ID, "book-now")))
 
             # Hover over the 'Book Now' drop-down menu
             hover = ActionChains(self.driver).move_to_element(book_now_dropdown)
@@ -173,7 +173,7 @@ class BookingBot:
 
             # Click the desired location from the drop-down menu
             desired_location = self.config['desired_location']
-            location = WebDriverWait(self.driver, 1).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
+            location = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
             location.click()
 
             logging.info(f"Clicked 'Book Now' > {desired_location}!")
@@ -187,7 +187,8 @@ class BookingBot:
     def select_session(self):
         '''
         Select the specified session based on the desired session information.
-        This method also clicks the "NEXT WEEK" button to navigate to the sessions for the following week.
+        This method can handle multiple sessions by the same instructor on the same day.
+        Note, this method also clicks the "NEXT WEEK" button to navigate to the sessions for the following week.
 
         Returns:
             bool: True if the desired session is successfully selected, False otherwise.
@@ -212,26 +213,28 @@ class BookingBot:
             logging.info(f"Located desired session day: {session_day_class_attribute}!")
 
             # Locate the desired instructor (via data-instructor)
+            # Note: An instructor can have multiple sessions in a day
             desired_session_data_instructor = self.config['desired_session']['data_instructor']
-            session_day_data_instructor = WebDriverWait(session_day, self.lag).until(EC.presence_of_element_located((By.CSS_SELECTOR, f"div[data-instructor = '{desired_session_data_instructor}']")))
-            session_day_data_instructor_text = session_day_data_instructor.text
-            logging.info(f"Session data instructor element:\n{session_day_data_instructor_text}")
+            all_sessions_day_data_instructor = WebDriverWait(session_day, self.lag).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, f"div[data-instructor = '{desired_session_data_instructor}']")))
 
-            # Confirm and click on the desired session activity
+            # Locate, confirm and click on the desired session activity
             desired_session_activity = self.config['desired_session']['activity']
             desired_session_instructor = self.config['desired_session']['instructor']
+            desired_session_time = self.config['desired_session']['time']
 
-            if (desired_session_activity in session_day_data_instructor_text) and (desired_session_instructor in session_day_data_instructor_text):
-                session_day_activity = WebDriverWait(session_day_data_instructor, self.lag).until(EC.element_to_be_clickable((By.TAG_NAME, "a")))
-                self.driver.execute_script("arguments[0].scrollIntoView();", session_day_activity)   # Scroll the element into view
-                session_day_activity.click()
-                
-                logging.info(f"Clicked on '{desired_session_activity}, {desired_session_instructor}'!")
-                self.driver.switch_to.default_content()
-                return True
-            else:
-                logging.info("Unable to find the correct activity and/or instructor.")
-                return False
+            for session in all_sessions_day_data_instructor:
+                session_text = session.text
+                if (desired_session_activity in session_text) and (desired_session_instructor in session_text) and (desired_session_time in session_text):
+                    session_day_activity = WebDriverWait(session, self.lag).until(EC.element_to_be_clickable((By.TAG_NAME, "a")))
+                    self.driver.execute_script("arguments[0].scrollIntoView();", session_day_activity)   # Scroll the element into view
+                    session_day_activity.click()
+                    
+                    logging.info(f"Clicked on:\n{session_text}")
+                    self.driver.switch_to.default_content()
+                    return True
+            
+            logging.info("Unable to find the correct activity and/or instructor.")
+            return False
         
         except (NoSuchElementException, TimeoutException) as e:
             logging.info(f"Error selecting session: {e}")
