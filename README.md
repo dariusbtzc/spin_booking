@@ -3,7 +3,7 @@ Scripts for automating bookings on [Cru](https://www.cru68.com/).
 
 ## Requirements
 - Python 3.x
-- Compatible with macOS and Linux (not tested on Windows)
+- Compatible with macOS and Linux
 
 ## Booking details
 - Booking configurations can be found in `config.json`.
@@ -31,6 +31,3 @@ Run `pip install -r requirements.txt` to install required packages.
     - Also, replace `/path/to/your/python` with the actual path to your Python interpreter and `/path/to/your/bot_runner.py` with the path to your `bot_runner.py` script.
 
 **Note**: The local computer needs to be switched on for the CRON job to run.
-
-## Troubleshooting
-If the script fails to run, check the CRON logs for errors.
