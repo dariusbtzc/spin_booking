@@ -25,10 +25,10 @@ Run `pip install -r requirements.txt` to install required packages.
 
 ## CRON instructions
 1. Open the CRON editor using the command: `crontab -e`
-2. Add a CRON job by appending: `0 12 * * 1 export CRU_BOOKING_EMAIL='your_email'; export CRU_BOOKING_PASSWORD='your_password'; /path/to/your/python3 /path/to/your/bot_runner.py`
+2. Add a CRON job by appending: `0 12 * * 1 export CRU_BOOKING_EMAIL='your_email'; export CRU_BOOKING_PASSWORD='your_password'; /path/to/your/python /path/to/your/bot_runner.py`
     - This configuration schedules the script to run every Monday at 12:00PM.
     - Make sure to replace `your_email` and `your_password` with the actual email and password. 
-    - Also, replace `/path/to/your/python3` with the actual path to your Python3 interpreter and `/path/to/your/bot_runner.py` with the path to your `bot_runner.py` script.
+    - Also, replace `/path/to/your/python` with the actual path to your Python interpreter and `/path/to/your/bot_runner.py` with the path to your `bot_runner.py` script.
 
 **Note**: The local computer needs to be switched on for the CRON job to run.
 
