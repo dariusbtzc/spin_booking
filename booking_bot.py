@@ -70,7 +70,7 @@ class BookingBot:
         '''
         
         OPTIONS = Options()
-        # OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
+        OPTIONS.add_argument('--headless=new')  # headless: browser session not visible
         self.driver = webdriver.Chrome(service = ChromeService(ChromeDriverManager().install()), options = OPTIONS)
         self.logger.info("Started the Chrome driver.")
 
@@ -304,18 +304,18 @@ class BookingBot:
             None
         '''
 
-        # time_check_limit = self.config['time_check_limit']
-        # time_check_count = 0
+        time_check_limit = self.config['time_check_limit']
+        time_check_count = 0
 
-        # while not self.is_time_to_book():  
-        #     self.logger.info("Waiting for the right time to book...")
-        #     time.sleep(60)  
+        while not self.is_time_to_book():  
+            self.logger.info("Waiting for the right time to book...")
+            time.sleep(60)  
 
-        #     time_check_count += 1  
+            time_check_count += 1  
 
-        #     if time_check_count >= time_check_limit:
-        #         self.logger.info("Reached the limit for time checks. Exiting.")
-        #         return None
+            if time_check_count >= time_check_limit:
+                self.logger.info("Reached the limit for time checks. Exiting.")
+                return None
 
         max_tries = self.config['max_tries']
         booking_successful = False
