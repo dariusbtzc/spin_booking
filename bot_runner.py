@@ -54,7 +54,7 @@ def book_bike(desired_bike):
 def main():
     '''
     Main function to initiate the booking process for each desired bike.
-    Creates a thread pool and runs the booking process for each bike in parallel.
+    Uses multi-threading to run the booking process for each bike in parallel.
 
     Returns:
         None
