@@ -16,7 +16,7 @@ Run `pip install -r requirements.txt` to install the required packages.
 - Booking configurations can be found in `config.json`.
 - The main execution script is `bot_runner.py`, which utilises the `BookingBot` class from `booking_bot.py` to perform the booking steps.
 
-**Note**: Each bike booking is executed in parallel.
+**Note**: Each bike booking is executed in parallel by `bot_runner.py`.
 
 ### Booking steps:
 1. Continuously check if the current day and time fall within the desired booking window.
