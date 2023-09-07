@@ -9,6 +9,7 @@ Scripts for automating bookings on [Cru](https://www.cru68.com/). The scripts ar
 ## Booking details
 - Booking configurations can be found in `config.json`.
 - The main execution script is `bot_runner.py`, which utilises the `BookingBot` class from `booking_bot.py` to perform the booking steps.
+- **Note**: Each bike booking is executed in parallel
 
 ### Booking steps:
 1. Continuously check if the current day and time fall within the desired booking window.
