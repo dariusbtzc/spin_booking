@@ -13,7 +13,7 @@
         "data_instructor": "20000000022",
         "time": "9:45 AM"
     },
-    "desired_bikes": ["B7", "B8", "B9", "B10"],
+    "desired_bikes": ["B07", "B08", "B09", "B10"],
     "max_tries": 5,
     "default_lag": 1
 }
