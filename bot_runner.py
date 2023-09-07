@@ -29,7 +29,7 @@ def book_bike(desired_bike):
     # Get the current timestamp
     current_timestamp = time.strftime("%Y%m%d_%H%M%S")
 
-    log_filename = f'logs/booking_bot_{desired_bike}_{current_timestamp}.log'
+    log_filename = f'logs/booking_bot_{current_timestamp}_{desired_bike}.log'
     
     # Create a new logger
     logger = logging.getLogger(desired_bike)
