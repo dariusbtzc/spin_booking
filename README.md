@@ -34,6 +34,6 @@ Run `pip install -r requirements.txt` to install the required packages.
 
 **Note**: The local computer must be switched on for the CRON job to run.
 
-## Logging 
+## Logging
 - Logs are saved in the `logs/` directory.
 - Each log file is timestamped and includes the name of the desired bike for easy identification.
