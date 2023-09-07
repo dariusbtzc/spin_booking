@@ -15,5 +15,5 @@
     },
     "desired_bikes": ["B07", "B08", "B09", "B10"],
     "max_tries": 5,
-    "default_lag": 1
+    "default_lag": 2
 }
