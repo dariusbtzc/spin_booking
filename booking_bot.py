@@ -294,9 +294,9 @@ class BookingBot:
         Main function to execute the booking process.
         
         This function will attempt to the book desired bike based on the configuration settings.
-        Each bike booking will go through a series of steps: login, select location, select session and select bike.
+        This function first checks if it's the right time to book based on the configuration settings.
+        Each bike booking will then go through a series of steps: login, select location, select session and select bike.
         Each bike booking will be attempted for a maximum number of tries as specified in the configuration.
-        The function also checks if it's the right time to book based on the configuration settings.
         Logs each attempt and the outcome.
 
         Parameters:
@@ -306,6 +306,7 @@ class BookingBot:
             None
         '''
 
+        # Time check
         time_check_limit = self.config['time_check_limit']
         time_check_count = 0
 
@@ -319,6 +320,7 @@ class BookingBot:
                 self.logger.info("Reached the limit for time checks. Exiting.")
                 return None
 
+        # If within the booking window, execute bike booking attempts
         max_tries = self.config['max_tries']
         booking_successful = False
 
