@@ -2,7 +2,7 @@
 Scripts for automating bookings on [Cru](https://www.cru68.com/). The scripts are designed to run on a schedule and will attempt to book bikes based on the configuration settings specified in `config.json`.
 
 ## Requirements
-- Python 3.8.8
+- Python 3.8.8 or higher
 - Compatible with macOS and Linux
 - Environment variables for login credentials
 
