@@ -13,7 +13,7 @@ if not os.path.exists('logs'):
 with open('config.json', 'r') as file:
     config = json.load(file)
 
- 
+
 def book_bike(desired_bike):
     '''
     Function to book a specific bike using the BookingBot class.
