@@ -167,6 +167,7 @@ class BookingBot:
 
         try:
             # Locate the 'Book Now' drop-down menu
+            # Note: self.lag is not used here
             book_now_dropdown = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.ID, "book-now")))
 
             # Hover over the 'Book Now' drop-down menu
@@ -174,6 +175,7 @@ class BookingBot:
             hover.perform()
 
             # Click the desired location from the drop-down menu
+            # Note: self.lag is not used here
             desired_location = self.config['desired_location']
             location = WebDriverWait(self.driver, 1).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_location)))
             location.click()
