@@ -6,6 +6,12 @@ Scripts for automating bookings on [Cru](https://www.cru68.com/). The scripts ar
 - Compatible with macOS and Linux
 - Environment variables for login credentials
 
+## Dependencies
+- Selenium
+- WebDriver Manager
+
+Run `pip install -r requirements.txt` to install the required packages.
+
 ## Booking details
 - Booking configurations can be found in `config.json`.
 - The main execution script is `bot_runner.py`, which utilises the `BookingBot` class from `booking_bot.py` to perform the booking steps.
@@ -20,11 +26,9 @@ Scripts for automating bookings on [Cru](https://www.cru68.com/). The scripts ar
     2. Navigate to the desired session and select it.
     3. Pick the preferred seat (bike).
 
-## Dependencies
-- Selenium
-- WebDriver Manager
-
-Run `pip install -r requirements.txt` to install the required packages.
+### Logging
+- Logs are saved in the `logs/` directory.
+- Each log file is timestamped and includes the name of the desired bike for easy identification.
 
 ## CRON instructions
 1. Open the CRON editor using the command: `crontab -e`
@@ -35,7 +39,3 @@ Run `pip install -r requirements.txt` to install the required packages.
     - Replace `/path/to/your/python` with the actual path to your Python interpreter.
 
 **Note**: The local computer must be switched on for the CRON job to run.
-
-## Logging
-- Logs are saved in the `logs/` directory.
-- Each log file is timestamped and includes the name of the desired bike for easy identification.
