@@ -26,7 +26,7 @@ Run `pip install -r requirements.txt` to install the required packages.
     2. Navigate to the desired session and select it.
     3. Pick the preferred seat (bike).
 
-### Logging
+### Logging:
 - Logs are saved in the `logs/` directory.
 - Each log file is timestamped and includes the name of the desired bike for easy identification.
 
