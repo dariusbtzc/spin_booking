@@ -265,7 +265,7 @@ class BookingBot:
             bike = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.XPATH, f"//a[.//span[text()='{desired_bike}']]")))
             bike.click()
 
-            self.logger.info(f"Clicked {desired_bike}!")
+            self.logger.info(f"Clicked bike {desired_bike}!")
             return True
 
         except (NoSuchElementException, TimeoutException) as e:
