@@ -266,6 +266,7 @@ class BookingBot:
             bike.click()
 
             self.logger.info(f"Clicked bike {desired_bike}!")
+            self.driver.switch_to.default_content()
             return True
 
         except (NoSuchElementException, TimeoutException) as e:
@@ -287,11 +288,11 @@ class BookingBot:
             # Switch to the iframe
             iframe_element = WebDriverWait(self.driver, self.lag).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
             self.driver.switch_to.frame(iframe_element)
-
+            
             # Locate and click the desired series
             desired_series = self.config['desired_series']
-            bike = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_series)))
-            bike.click()
+            series = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_series)))
+            series.click()
 
             # Wait for a short duration to check for the outcome message
             time.sleep(self.lag)  
