@@ -265,7 +265,7 @@ class BookingBot:
             self.driver.switch_to.frame(iframe_element)
 
             # Locate and click the desired bike
-            bike = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_bike)))
+            bike = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.XPATH, f"//a[.//span[text()='{desired_bike}']]")))
             bike.click()
 
             # Wait for a short duration to check for the outcome message
