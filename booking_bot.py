@@ -184,7 +184,7 @@ class BookingBot:
             return True
         
         except (NoSuchElementException, TimeoutException) as e:
-            self.logger.info(f"Error selecting location from 'Book Now' drop-down: {e}")
+            self.logger.info(f"Error when selecting location from 'Book Now' drop-down: {e}")
             return False
 
 
@@ -208,7 +208,7 @@ class BookingBot:
             next_week_link = WebDriverWait(next_week_button, self.lag).until(EC.element_to_be_clickable((By.TAG_NAME, "a")))
             self.driver.execute_script("arguments[0].scrollIntoView();", next_week_link)  # Scroll the element into view
             next_week_link.click()
-            self.logger.info(f"Click 'NEXT WEEK' button!")
+            self.logger.info(f"Clicked 'NEXT WEEK' button!")
 
             # Locate the desired session day
             desired_session_day = self.config['desired_session']['day']
@@ -241,7 +241,7 @@ class BookingBot:
             return False
         
         except (NoSuchElementException, TimeoutException) as e:
-            self.logger.info(f"Error selecting session: {e}")
+            self.logger.info(f"Error when selecting session: {e}")
             return False
     
 
@@ -253,10 +253,7 @@ class BookingBot:
             desired_bike (str): The bike to be selected.
 
         Returns:
-            str: A message indicating the outcome of the bike selection. This could be one of the following:
-                - A success message if the bike is successfully booked.
-                - An error message if there was an issue during the booking.
-                - A message indicating that the user doesn't have a series in their account that's applicable for this class.
+            bool: True if the desired bike is successfully selected, False otherwise.
         '''
 
         try:
@@ -268,27 +265,48 @@ class BookingBot:
             bike = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.XPATH, f"//a[.//span[text()='{desired_bike}']]")))
             bike.click()
 
+            self.logger.info(f"Clicked {desired_bike}!")
+            return True
+
+        except (NoSuchElementException, TimeoutException) as e:
+            self.logger.info(f"Error when selecting bike: {e}")
+            return False
+        
+    
+    def select_series(self):
+        '''
+        Select the desired series package to use for the class.
+
+        Returns:
+            str: A message indicating the outcome of the series selection. This could be one of the following:
+                - A success message if the class is successfully booked.
+                - An error message if there's no such series or other reasons.
+        '''
+
+        try:
+            # Switch to the iframe
+            iframe_element = WebDriverWait(self.driver, self.lag).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+            self.driver.switch_to.frame(iframe_element)
+
+            # Locate and click the desired series
+            desired_series = self.config['desired_series']
+            bike = WebDriverWait(self.driver, self.lag).until(EC.element_to_be_clickable((By.LINK_TEXT, desired_series)))
+            bike.click()
+
             # Wait for a short duration to check for the outcome message
             time.sleep(self.lag)  
-
-            try:
-                no_series_msg_element = self.driver.find_element(By.CSS_SELECTOR, "a[data-dismiss = 'alert']")
-                if no_series_msg_element.is_displayed():
-                    return "You don't have a series in your account that's applicable for this class."
-            except (NoSuchElementException, TimeoutException):
-                pass
 
             try:
                 success_msg_element = self.driver.find_element(By.CLASS_NAME, "success-message")
                 if success_msg_element.is_displayed():
                     return success_msg_element.text
-            except (NoSuchElementException, TimeoutException):
-                return "Unknown outcome after seat selection."
+            except (NoSuchElementException, TimeoutException) as e:
+                return f"Error when selecting series: {e}"
 
         except (NoSuchElementException, TimeoutException) as e:
-            return f"Error during seat selection: {e}"
-        
-    
+            return f"Error when selecting series: {e}"
+
+
     def run(self, desired_bike):
         '''
         Main function to execute the booking process.
@@ -331,13 +349,14 @@ class BookingBot:
                 if self.login_to_website():
                     if self.click_book_now():
                         if self.select_session():
-                            result = self.select_bike(desired_bike)
-                            if "successfully enrolled" in result:
-                                self.logger.info(f"Booking successful for bike {desired_bike}!")
-                                booking_successful = True
-                                break
-                            else:
-                                self.logger.info(result)
+                            if self.select_bike(desired_bike):
+                                result = self.select_series()
+                                if "successfully enrolled" in result:
+                                    self.logger.info(f"Class booking successful for bike {desired_bike}!")
+                                    booking_successful = True
+                                    break
+                                else:
+                                    self.logger.info(result)
             finally:
                 self.stop_driver()
 
