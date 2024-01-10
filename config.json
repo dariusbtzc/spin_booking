@@ -14,6 +14,7 @@
         "time": "3:00 PM"
     },
     "desired_bikes": ["B4", "B5"],
+    "desired_series": "Use 40% off PURE 50 Class",
     "max_tries": 5,
     "default_lag": 2
 }
